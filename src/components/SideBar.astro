@@ -1,0 +1,21 @@
+---
+import SideBarMenu from "./SideBarMenu.astro";
+import { PROFILE } from "../config";
+---
+
+<div class="drawer-side z-40">
+  <label for="my-drawer" class="drawer-overlay"></label>
+  <aside class="px-2 pt-2 h-auto min-h-full w-[19rem] bg-base-200 text-base-content flex flex-col">
+    <div class="w-fit mx-auto mt-6 mb-3">
+      <a href="/">
+        <img class="w-[10.5rem] rounded-xl shadow-sm transition ease-in-out hover:scale-[102%]" width="480" height="653" src="/profile.webp" alt="Joowon Kim" />
+      </a>
+    </div>
+    <div class="text-center px-4 mb-4">
+      <div class="text-xl font-semibold tracking-tight">{PROFILE.name}</div>
+      <div class="text-sm mt-1 opacity-80">{PROFILE.title}</div>
+      <div class="text-xs mt-1 opacity-60">{PROFILE.location}</div>
+    </div>
+    <SideBarMenu />
+  </aside>
+</div>

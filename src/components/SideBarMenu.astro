@@ -1,0 +1,52 @@
+---
+const items = [
+  { id: "about", label: "About" },
+  { id: "publications", label: "Publications" },
+  { id: "experience", label: "Experience" },
+  { id: "education", label: "Education" },
+];
+---
+
+<ul class="menu grow shrink menu-md overflow-y-auto">
+    {items.map((it) => (
+        <li><a class="py-3 text-base nav-link" data-target={it.id} href={`/#${it.id}`}>{it.label}</a></li>
+    ))}
+    <li><a class="py-3 text-base" href="/assets/Joowon_Kim_CV.pdf" target="_blank" rel="noopener">CV</a></li>
+</ul>
+
+<script>
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>(".nav-link"));
+  const drawer = document.getElementById("my-drawer") as HTMLInputElement | null;
+
+  // Smooth-scroll within the home page instead of jumping; "About" goes to the very top.
+  links.forEach((a) => {
+    a.addEventListener("click", (ev) => {
+      const id = a.dataset.target!;
+      const el = document.getElementById(id);
+      if (!el) return; // not on the home page (e.g. 404): follow the link normally
+      ev.preventDefault();
+      if (id === "about") window.scrollTo({ top: 0, behavior: "smooth" });
+      else el.scrollIntoView({ behavior: "smooth", block: "start" });
+      history.replaceState(null, "", id === "about" ? "/" : `/#${id}`);
+      if (drawer) drawer.checked = false;
+    });
+  });
+
+  // Highlight the menu item of the section currently in view.
+  const sections = links.map((a) => document.getElementById(a.dataset.target!)).filter(Boolean) as HTMLElement[];
+  const setActive = () => {
+    const y = window.scrollY + window.innerHeight * 0.3;
+    let current = sections[0];
+    for (const s of sections) if (s.offsetTop <= y) current = s;
+    if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 2) {
+      // at the bottom of the page the last sections cannot reach the threshold
+      const visible = sections.filter((s) => s.getBoundingClientRect().top < window.innerHeight);
+      current = visible[visible.length - 1] ?? current;
+    }
+    links.forEach((a) => a.classList.toggle("bg-base-300", a.dataset.target === current?.id));
+  };
+  if (sections.length) {
+    setActive();
+    window.addEventListener("scroll", setActive, { passive: true });
+  }
+</script>

@@ -1,0 +1,65 @@
+---
+import type { Publication } from "../data/publications";
+import { ME } from "../data/publications";
+
+interface Props {
+  pub: Publication;
+}
+const { pub } = Astro.props;
+
+// Bold the site owner's name; keep the equal-contribution marker next to it.
+const authors = pub.authors
+  .split(", ")
+  .map((a) => {
+    const star = a.endsWith("*");
+    const name = star ? a.slice(0, -1) : a;
+    return { name, star, me: name === ME };
+  });
+---
+
+<div class="pub flex flex-col sm:flex-row sm:items-center gap-4 py-5">
+  <div class:list={["sm:w-60 shrink-0", !pub.img && !pub.thumbText && "hidden sm:block"]}>
+    {
+      pub.img ? (
+        <img src={pub.img} alt={pub.title} loading="lazy" class="w-full aspect-[16/9] object-contain rounded-lg border border-base-300 bg-white" />
+      ) : (
+        <div class="w-full aspect-[16/9] rounded-lg border border-base-300 bg-base-200 flex items-center justify-center text-sm font-medium text-base-content/60 text-center px-3">
+          {pub.thumbText ?? pub.venue}
+        </div>
+      )
+    }
+  </div>
+  <div class="grow">
+    {
+      !pub.hideBadge && (
+        <div class="mb-1">
+          <span class:list={["venue", pub.status === "published" ? "venue-pub" : "venue-pre"]}>{pub.venue}</span>
+        </div>
+      )
+    }
+    <h3 class="font-semibold leading-snug text-[1.02rem]">{pub.title}</h3>
+    <p class="text-sm mt-1 text-base-content/75">
+      {
+        authors.map((a, i) => (
+          <>
+            {a.me ? <span class="font-semibold text-base-content">{a.name}</span> : a.name}
+            {a.star && "*"}
+            {i < authors.length - 1 && ", "}
+          </>
+        ))
+      }
+    </p>
+    {pub.hideBadge && pub.venueFull && <p class="text-sm italic opacity-70 mt-0.5">{pub.venueFull}</p>}
+    {
+      pub.links && (
+        <div class="flex flex-wrap gap-2 mt-2">
+          {pub.links.map((l) => (
+            <a href={l.url} target="_blank" rel="noopener" class="pub-link">
+              {l.label}
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</div>

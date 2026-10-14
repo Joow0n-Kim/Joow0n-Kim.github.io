@@ -1,0 +1,137 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PubItem from "../components/PubItem.astro";
+import LogoEntry from "../components/LogoEntry.astro";
+import ContactLinks from "../components/ContactLinks.astro";
+import { NEWS } from "../data/news";
+import { PUBLICATIONS } from "../data/publications";
+import { EXPERIENCE, EDUCATION, SERVICES, SKILLS, ACTIVITIES } from "../data/cv";
+
+const published = PUBLICATIONS.filter((p) => p.status === "published");
+const preprints = PUBLICATIONS.filter((p) => p.status === "preprint");
+const recentNews = NEWS.slice(0, 6);
+const olderNews = NEWS.slice(6);
+---
+
+<BaseLayout sideBarActiveItemID="home">
+  <section id="about" class="mt-2 mb-12">
+    <h1 class="cv-serif text-[2.6rem] leading-tight font-bold">Joowon Kim</h1>
+    <div class="cv-serif text-xl mt-1 text-base-content/70">Ph.D. Student in Artificial Intelligence, Korea Advanced Institute of Science and Technology (KAIST)</div>
+    <ContactLinks />
+    <div class="prose max-w-none mt-6">
+      <p>
+        I am a Ph.D. student at the <a href="https://mli.kaist.ac.kr/" target="_blank">Machine Learning and Intelligence Lab (MLILAB)</a>
+        at KAIST, advised by <a href="https://scholar.google.com/citations?user=UWO1mloAAAAJ&hl=ko&oi=ao" target="_blank">Prof. Eunho Yang</a>.
+        I am also a research intern on the Omni Foundation Model team at <b>NAVER Cloud</b>.
+      </p>
+      <p>
+        My research interests lie in <b>multimodal learning</b>, with a particular focus on <b>generative models</b> and
+        <b>vision–language models (VLMs)</b>. Throughout my work, I favor training-free methods that improve both the
+        performance and the <b>inference-time efficiency</b> of existing models, for instance by <b>routing</b> computation
+        only to where it is needed or by <b>ensembling</b> complementary models. My earlier work developed
+        test-time scaling methods for diffusion and visual auto-regressive models. I then moved to
+        <b>video reasoning</b>, using <b>video generation models</b> as world simulators that let VLMs reason about how a
+        scene unfolds.
+      </p>
+      <p>
+        More broadly, I am interested in how models <b>represent and simulate the visual world</b>. Recently, I have
+        focused on <b>vision tokenizers</b>, the representation every multimodal model builds on, and on resolving their
+        limitations at the pretraining stage. Looking ahead, I aim to move from representing the world to predicting and
+        acting in it, through <b>world models</b> and <b>world action models</b> for <b>physical AI</b>.
+      </p>
+    </div>
+  </section>
+
+  <section id="news" class="mb-12">
+    <h2 class="section-title">News</h2>
+    <ul class="news">
+      {recentNews.map((n) => (
+        <li><span class="news-date">{n.date}</span><span set:html={n.text} /></li>
+      ))}
+    </ul>
+    {
+      olderNews.length > 0 && (
+        <details class="mt-2">
+          <summary class="cursor-pointer text-sm opacity-70">Older news</summary>
+          <ul class="news mt-2">
+            {olderNews.map((n) => (
+              <li><span class="news-date">{n.date}</span><span set:html={n.text} /></li>
+            ))}
+          </ul>
+        </details>
+      )
+    }
+  </section>
+
+  <section id="publications" class="mb-12">
+    <h2 class="section-title">Publications</h2>
+    <p class="text-sm opacity-70 -mt-2 mb-1">* equal contribution</p>
+    <h3 class="subsection-title">Conference &amp; Journal</h3>
+    <div class="divide-y divide-base-300 mb-6">
+      {published.map((p) => <PubItem pub={p} />)}
+    </div>
+    <h3 class="subsection-title">Preprints &amp; Under Review</h3>
+    <div class="divide-y divide-base-300">
+      {preprints.map((p) => <PubItem pub={p} />)}
+    </div>
+  </section>
+
+  <section id="experience" class="mb-12">
+    <h2 class="section-title">Experience</h2>
+    <div class="divide-y divide-base-300">
+      {EXPERIENCE.map((e) => <LogoEntry entry={e} />)}
+    </div>
+  </section>
+
+  <section id="services" class="mb-12">
+    <h2 class="section-title">Academic Services</h2>
+    <ul class="space-y-1">
+      {SERVICES.map((s) => <li><span class="font-semibold">{s.title}:</span> {s.detail}</li>)}
+    </ul>
+  </section>
+
+  <section id="education" class="mb-12">
+    <h2 class="section-title">Education</h2>
+    <div class="flex gap-6 items-center py-4">
+      <div class="w-20 sm:w-24 shrink-0 flex justify-center">
+        <img src="/logos/kaist.svg" alt="KAIST" class="max-h-16 object-contain" loading="lazy" />
+      </div>
+      <div class="grow">
+        <h3 class="font-semibold text-[1.05rem] leading-snug">Korea Advanced Institute of Science and Technology (KAIST)</h3>
+        <ol class="edu-timeline mt-3">
+          {EDUCATION.map((e) => (
+            <li>
+              <div class="font-medium">{e.role}</div>
+              <div class="text-sm text-base-content/60">{e.period}</div>
+              {e.details?.map((d) => <div class="text-sm text-base-content/75" set:html={d} />)}
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills" class="mb-12">
+    <h2 class="section-title">Skills</h2>
+    <dl class="grid grid-cols-1 sm:grid-cols-[13rem_1fr] gap-x-4 gap-y-1.5">
+      {SKILLS.map((k) => (
+        <>
+          <dt class="font-semibold">{k.category}</dt>
+          <dd class="text-base-content/80 mb-1 sm:mb-0">{k.items}</dd>
+        </>
+      ))}
+    </dl>
+  </section>
+
+  <section id="activities" class="mb-6">
+    <h2 class="section-title">Extra Activities</h2>
+    <ul class="space-y-1.5">
+      {ACTIVITIES.map((a) => (
+        <li class="flex justify-between gap-4">
+          <span><span class="font-semibold">{a.title}</span>{a.note && <span class="text-base-content/60"> ({a.note})</span>}</span>
+          <span class="shrink-0 text-sm text-base-content/60 tabular-nums">{a.period}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>

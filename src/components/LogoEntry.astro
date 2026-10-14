@@ -1,0 +1,27 @@
+---
+import type { Entry } from "../data/cv";
+interface Props {
+  entry: Entry;
+}
+const { entry } = Astro.props;
+---
+
+<div class="flex gap-6 py-5 items-center">
+  <div class="w-20 sm:w-24 h-16 shrink-0 flex items-center justify-center">
+    {entry.logo && <img src={entry.logo} alt={entry.org} class="max-h-14 max-w-full object-contain" loading="lazy" />}
+  </div>
+  <div class="grow">
+    <h3 class="font-semibold text-[1.05rem] leading-snug">{entry.org}</h3>
+    <div class="mt-1">{entry.role}</div>
+    <div class="text-sm text-base-content/60 mt-0.5">{entry.period}</div>
+    {
+      entry.details && entry.details.length > 0 && (
+        <ul class="text-sm text-base-content/75 mt-1.5 space-y-0.5">
+          {entry.details.map((d) => (
+            <li set:html={d} />
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</div>
